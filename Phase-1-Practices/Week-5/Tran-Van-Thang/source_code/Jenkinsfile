@@ -1,70 +1,57 @@
 pipeline {
-	agent none                
+    agent none
 
-   
-
-  
     stages {
         stage('Build') {
-			agent {
-				docker {
-					image 'maven:3.8.1-adoptopenjdk-11'
-					args '-v /root/.m2:/root/.m2'
-				}
-			}
+            agent {
+                docker {
+                    image 'maven:3.8.1-adoptopenjdk-11'
+                    args '-v /root/.m2:/root/.m2'
+                }
+            }
             steps {
                 sh 'mvn -B -DskipTests clean package'
             }
         }
-        stage('Test') { 
-			agent {
-				docker {
-					image 'maven:3.8.1-adoptopenjdk-11'
-					args '-v /root/.m2:/root/.m2'
-				}
-			}
+        stage('Test') {
+            agent {
+                docker {
+                    image 'maven:3.8.1-adoptopenjdk-11'
+                    args '-v /root/.m2:/root/.m2'
+                }
+            }
             steps {
-                sh 'mvn test' 
+                sh 'mvn test'
             }
             post {
                 always {
-                    junit 'target/surefire-reports/*.xml' 
+                    junit 'target/surefire-reports/*.xml'
                 }
             }
         }
-		
-		
-		stage("Build Docker file"){
-			
-			agent { node 'master' }
 
-		    steps {
-			    sh 'docker build -t tranthang2404/simple-java:latest .'      
-			}
-			
-		}
-		
-		stage("Publish to Docker hub"){
-			
-			agent { node 'master' }
+        stage('Build Docker file') {
+            agent { node 'master' }
 
-		    steps {
-			    sh 'docker push tranthang2404/simple-java:latest'      
-			}
-			
-		}
+            steps {
+                sh 'docker build -t tranthang2404/simple-java:latest .'
+            }
+        }
 
-	
-	
-		
-		
-		stage('Deploy on K8s') {
+        stage('Publish to Docker hub') {
+            agent { node 'master' }
 
-		  agent { node 'node-k8s' }
+            steps {
+                sh 'docker push tranthang2404/simple-java:latest'
+            }
+        }
 
-		  steps {
-			sh 'kubectl apply -f ~/k8s/simple-server-java.yaml'      
-		  }
-  	    }
+        stage('Deploy on K8s') {
+            agent { node 'node-k8s' }
+
+            steps {
+                sh 'kubectl apply -f ~/k8s/simple-server-java.yaml'
+            }
+        }
     }
 }
