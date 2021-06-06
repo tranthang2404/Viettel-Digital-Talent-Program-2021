@@ -182,6 +182,12 @@ stage("Publish to Docker hub"){
 > Lưu ý: Trên Server chạy k8s các bạn cài đặt thêm Java8 hoặc Java11 để quá trình kết nối giữa Jenkins và server K8s không xảy ra lỗi.
 
 Các bạn truy cập `http://192.168.0.105:8080/computer/new` -> Điền tên node theo ý của mình -> Các bạn điền các thông tin liên quan đến server. Các bạn nhớ click chữ `Add` đã được mình trỏ mũi tên để cung cấp thông tin đăng nhập vì ở đây sử dụng cơ chế ssh nên các bạn cần cấp (tài khoản,mật khẩu) hoặc ssh key.
+![jenkins](https://user-images.githubusercontent.com/43313369/120930746-c9941600-c718-11eb-96fd-a5691e3db514.PNG)
+
+Kết quả setup thành công:
+![2node](https://user-images.githubusercontent.com/43313369/120930787-fea06880-c718-11eb-81fb-8c16ca6307b0.PNG)
+
+
 
 Tạo sẵn một file `~/k8s/simple-server-java.yaml` để triển khai service LoadBalancer khi có yêu cầu từ Jenkins. File đó có nội dung như sau (thay đổi tên images theo tên bạn đã sử dụng):
 
@@ -237,8 +243,7 @@ stage('Deploy on K8s') {
 }
 ```
 
-> Tên `node-k8s` là tên node mình vừa thêm ở các vừa xong
-
+> `node-k8s` là tên node mình vừa thêm ở các bước trên
 ## V. Kiểm tra kết quả
 
 - Sau khi hoàn thiện các bước setup và Jenkins file các bạn nhấn `Build Now` và xem kết quả Build ở `Console Output` nếu tất cả các `stage` đều `SUCCESS` thì bạn đã thành công.
@@ -255,6 +260,7 @@ Sau đó gọi API `tests` để xem kết quả
 ```console
     curl "http://192.168.49.2:30393/tests"
 ```
+![kkqetqua](https://user-images.githubusercontent.com/43313369/120930764-de70a980-c718-11eb-914f-60ba1f31a767.PNG)
 
 ## VI. Tài liệu tham khảo
 
